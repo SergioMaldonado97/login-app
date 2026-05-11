@@ -14,10 +14,14 @@ public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
-    public AuthController(UsuarioRepository usuarioRepository, BCryptPasswordEncoder passwordEncoder) {
+    public AuthController(UsuarioRepository usuarioRepository,
+                          BCryptPasswordEncoder passwordEncoder,
+                          JwtUtil jwtUtil) {
         this.usuarioRepository = usuarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtUtil = jwtUtil;
     }
 
     @PostMapping("/login")
@@ -28,9 +32,11 @@ public class AuthController {
         Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
 
         if (usuario.isPresent() && passwordEncoder.matches(password, usuario.get().getPassword())) {
+            String token = jwtUtil.generarToken(usuario.get().getUsername(), usuario.get().getRol());
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Login exitoso",
+                "token", token,
                 "user", usuario.get().getNombre(),
                 "rol", usuario.get().getRol(),
                 "username", usuario.get().getUsername()

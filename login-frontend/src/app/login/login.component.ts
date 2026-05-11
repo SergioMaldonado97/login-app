@@ -29,7 +29,7 @@ export class LoginComponent {
       password: this.password
     }).subscribe({
       next: (res) => {
-        this.auth.guardarSesion({ username: res.username, nombre: res.user, rol: res.rol });
+        this.auth.guardarSesion({ username: res.username, nombre: res.user, rol: res.rol }, res.token);
         this.success = true;
         this.message = `¡Bienvenido, ${res.user}!`;
         this.loading = false;
