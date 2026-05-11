@@ -2,6 +2,7 @@ package com.sergio.login;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -66,20 +67,11 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
-        String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Token requerido"));
-        }
-        try {
-            String token = authHeader.substring(7);
-            String usernameToken = jwtUtil.getUsername(token);
-            String detalle = request.getParameter("detalle");
-            auditoriaService.registrar(
-                    EntidadAuditable.SESION, null, AccionAuditoria.LOGOUT,
-                    null, null, usernameToken, request, detalle);
-            return ResponseEntity.ok(Map.of("message", "Logout registrado"));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Token inválido"));
-        }
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String detalle = request.getParameter("detalle");
+        auditoriaService.registrar(
+                EntidadAuditable.SESION, null, AccionAuditoria.LOGOUT,
+                null, null, username, request, detalle);
+        return ResponseEntity.ok(Map.of("message", "Logout registrado"));
     }
 }

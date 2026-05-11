@@ -2,7 +2,6 @@ package com.sergio.login;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -26,8 +25,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/config/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/auth/logout").permitAll()
+                .requestMatchers("/api/auth/login", "/api/config/**").permitAll()
                 .requestMatchers("/api/auditoria/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
             )
