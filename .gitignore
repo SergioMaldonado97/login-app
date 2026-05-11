@@ -1,0 +1,14 @@
+# Backend
+login-backend/target/
+login-backend/.mvn/
+*.class
+*.jar
+
+# Frontend
+login-frontend/node_modules/
+login-frontend/dist/
+login-frontend/.angular/
+
+# IDE
+.idea/
+*.iml
