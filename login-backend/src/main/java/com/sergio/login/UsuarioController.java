@@ -21,7 +21,7 @@ public class UsuarioController {
     @GetMapping
     public List<UsuarioDTO> getAll() {
         return repo.findAll().stream()
-            .map(u -> new UsuarioDTO(u.getId(), u.getUsername(), u.getNombre()))
+            .map(u -> new UsuarioDTO(u.getId(), u.getUsername(), u.getNombre(), u.getRol()))
             .toList();
     }
 
@@ -30,16 +30,20 @@ public class UsuarioController {
         String username = body.get("username");
         String password = body.get("password");
         String nombre   = body.get("nombre");
+        String rol      = body.getOrDefault("rol", "REGULAR");
 
         if (username == null || password == null || nombre == null ||
             username.isBlank() || password.isBlank() || nombre.isBlank()) {
             return ResponseEntity.badRequest().body(Map.of("message", "Todos los campos son obligatorios"));
         }
+        if (!rol.equals("ADMIN") && !rol.equals("REGULAR")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Rol inválido"));
+        }
         if (repo.findByUsername(username).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("message", "El usuario ya existe"));
         }
-        Usuario saved = repo.save(new Usuario(username, password, nombre));
-        return ResponseEntity.ok(new UsuarioDTO(saved.getId(), saved.getUsername(), saved.getNombre()));
+        Usuario saved = repo.save(new Usuario(username, password, nombre, rol));
+        return ResponseEntity.ok(new UsuarioDTO(saved.getId(), saved.getUsername(), saved.getNombre(), saved.getRol()));
     }
 
     @PutMapping("/{id}")
@@ -51,11 +55,16 @@ public class UsuarioController {
         Usuario u = opt.get();
         String nombre   = body.getOrDefault("nombre",   u.getNombre());
         String password = body.getOrDefault("password", u.getPassword());
+        String rol      = body.getOrDefault("rol",      u.getRol());
 
-        Usuario updated = new Usuario(u.getUsername(), password.isBlank() ? u.getPassword() : password, nombre);
+        if (!rol.equals("ADMIN") && !rol.equals("REGULAR")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Rol inválido"));
+        }
+
+        Usuario updated = new Usuario(u.getUsername(), password.isBlank() ? u.getPassword() : password, nombre, rol);
         setId(updated, id);
         repo.save(updated);
-        return ResponseEntity.ok(new UsuarioDTO(id, updated.getUsername(), updated.getNombre()));
+        return ResponseEntity.ok(new UsuarioDTO(id, updated.getUsername(), updated.getNombre(), updated.getRol()));
     }
 
     @DeleteMapping("/{id}")
@@ -75,5 +84,5 @@ public class UsuarioController {
         } catch (Exception ignored) {}
     }
 
-    public record UsuarioDTO(Long id, String username, String nombre) {}
+    public record UsuarioDTO(Long id, String username, String nombre, String rol) {}
 }

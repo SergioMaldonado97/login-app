@@ -3,17 +3,20 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 interface Usuario {
   id: number;
   username: string;
   nombre: string;
+  rol: string;
 }
 
 interface UsuarioForm {
   username: string;
   password: string;
   nombre: string;
+  rol: string;
 }
 
 @Component({
@@ -33,13 +36,13 @@ export class UsuariosComponent implements OnInit {
   showModal = false;
   editMode = false;
   editId: number | null = null;
-  form: UsuarioForm = { username: '', password: '', nombre: '' };
+  form: UsuarioForm = { username: '', password: '', nombre: '', rol: 'REGULAR' };
   formError = '';
   formLoading = false;
 
   confirmDelete: number | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private auth: AuthService) {}
 
   ngOnInit() {
     this.cargar();
@@ -56,7 +59,7 @@ export class UsuariosComponent implements OnInit {
   abrirCrear() {
     this.editMode = false;
     this.editId = null;
-    this.form = { username: '', password: '', nombre: '' };
+    this.form = { username: '', password: '', nombre: '', rol: 'REGULAR' };
     this.formError = '';
     this.showModal = true;
   }
@@ -64,7 +67,7 @@ export class UsuariosComponent implements OnInit {
   abrirEditar(u: Usuario) {
     this.editMode = true;
     this.editId = u.id;
-    this.form = { username: u.username, password: '', nombre: u.nombre };
+    this.form = { username: u.username, password: '', nombre: u.nombre, rol: u.rol };
     this.formError = '';
     this.showModal = true;
   }
@@ -107,6 +110,7 @@ export class UsuariosComponent implements OnInit {
   }
 
   cerrarSesion() {
+    this.auth.cerrarSesion();
     this.router.navigate(['/login']);
   }
 }

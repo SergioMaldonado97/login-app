@@ -1,0 +1,30 @@
+<div class="page">
+  <header class="header">
+    <div class="header-left">
+      <span class="header-icon">🏠</span>
+      <h1>Mi Panel</h1>
+    </div>
+    <button class="btn btn-logout" (click)="cerrarSesion()">Cerrar sesión</button>
+  </header>
+
+  <div class="content">
+    <div class="welcome-card">
+      <div class="avatar">{{ sesion?.nombre?.charAt(0) }}</div>
+      <h2>Hola, {{ sesion?.nombre }}</h2>
+      <p>Has iniciado sesión correctamente.</p>
+      <span class="badge-rol regular">Usuario Regular</span>
+    </div>
+
+    <div class="info-card">
+      <h3>Tu información</h3>
+      <div class="info-row"><span class="label">Nombre</span><span>{{ sesion?.nombre }}</span></div>
+      <div class="info-row"><span class="label">Usuario</span><span>{{ sesion?.username }}</span></div>
+      <div class="info-row"><span class="label">Rol</span><span class="badge-rol regular">{{ sesion?.rol }}</span></div>
+    </div>
+
+    <div class="restricted-card">
+      <span class="lock-icon">🔒</span>
+      <p>La gestión de usuarios está disponible solo para administradores.</p>
+    </div>
+  </div>
+</div>

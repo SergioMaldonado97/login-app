@@ -27,6 +27,7 @@
           <th>#</th>
           <th>Nombre</th>
           <th>Usuario</th>
+          <th>Rol</th>
           <th>Acciones</th>
         </tr>
       </thead>
@@ -35,13 +36,14 @@
           <td class="td-id">{{ u.id }}</td>
           <td>{{ u.nombre }}</td>
           <td><span class="badge">{{ u.username }}</span></td>
+          <td><span class="badge-rol" [class.admin]="u.rol === 'ADMIN'" [class.regular]="u.rol === 'REGULAR'">{{ u.rol }}</span></td>
           <td class="td-actions">
             <button class="btn btn-edit" (click)="abrirEditar(u)">Editar</button>
             <button class="btn btn-danger" (click)="pedirConfirmacion(u.id)">Eliminar</button>
           </td>
         </tr>
         <tr *ngIf="usuarios.length === 0">
-          <td colspan="4" class="empty">No hay usuarios registrados.</td>
+          <td colspan="5" class="empty">No hay usuarios registrados.</td>
         </tr>
       </tbody>
     </table>
@@ -70,6 +72,13 @@
           <input type="password" [(ngModel)]="form.password" name="password"
             [placeholder]="editMode ? 'Nueva contraseña (opcional)' : 'Contraseña'"
             [required]="!editMode" />
+        </div>
+        <div class="form-group">
+          <label>Rol</label>
+          <select [(ngModel)]="form.rol" name="rol">
+            <option value="REGULAR">Regular</option>
+            <option value="ADMIN">Admin</option>
+          </select>
         </div>
 
         <div *ngIf="formError" class="alert alert-error">{{ formError }}</div>

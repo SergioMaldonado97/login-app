@@ -28,7 +28,9 @@ public class AuthController {
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Login exitoso",
-                "user", usuario.get().getNombre()
+                "user", usuario.get().getNombre(),
+                "rol", usuario.get().getRol(),
+                "username", usuario.get().getUsername()
             ));
         }
         return ResponseEntity.status(401).body(Map.of(

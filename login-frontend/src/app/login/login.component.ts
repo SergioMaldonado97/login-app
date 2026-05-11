@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,7 @@ export class LoginComponent {
   success = false;
   loading = false;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router, private auth: AuthService) {}
 
   onLogin() {
     this.loading = true;
@@ -28,10 +29,12 @@ export class LoginComponent {
       password: this.password
     }).subscribe({
       next: (res) => {
+        this.auth.guardarSesion({ username: res.username, nombre: res.user, rol: res.rol });
         this.success = true;
         this.message = `¡Bienvenido, ${res.user}!`;
         this.loading = false;
-        setTimeout(() => this.router.navigate(['/usuarios']), 800);
+        const destino = res.rol === 'ADMIN' ? '/usuarios' : '/dashboard';
+        setTimeout(() => this.router.navigate([destino]), 800);
       },
       error: (err) => {
         this.success = false;

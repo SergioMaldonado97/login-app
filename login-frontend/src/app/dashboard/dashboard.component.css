@@ -1,0 +1,114 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.page {
+  min-height: 100vh;
+  background: #f0f2f5;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.header {
+  background: linear-gradient(135deg, #1a1a2e, #0f3460);
+  color: white;
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-icon { font-size: 28px; }
+.header h1 { font-size: 22px; font-weight: 700; }
+
+.btn-logout {
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  transition: opacity 0.2s;
+}
+.btn-logout:hover { opacity: 0.8; }
+
+.content {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.welcome-card {
+  background: white;
+  border-radius: 14px;
+  padding: 36px;
+  text-align: center;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.avatar {
+  width: 72px; height: 72px;
+  background: linear-gradient(135deg, #0f3460, #e94560);
+  color: white;
+  border-radius: 50%;
+  font-size: 32px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+  text-transform: uppercase;
+}
+
+.welcome-card h2 { font-size: 22px; color: #1a1a2e; margin-bottom: 8px; }
+.welcome-card p  { color: #6b7280; margin-bottom: 16px; }
+
+.info-card {
+  background: white;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+
+.info-card h3 { font-size: 16px; color: #1a1a2e; margin-bottom: 20px; font-weight: 700; }
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 14px;
+  color: #374151;
+}
+.info-row:last-child { border-bottom: none; }
+.label { color: #9ca3af; font-weight: 600; }
+
+.badge-rol {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.badge-rol.regular  { background: #dbeafe; color: #1d4ed8; }
+.badge-rol.admin    { background: #fef3c7; color: #92400e; }
+
+.restricted-card {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #92400e;
+  font-size: 14px;
+}
+.lock-icon { font-size: 24px; }
