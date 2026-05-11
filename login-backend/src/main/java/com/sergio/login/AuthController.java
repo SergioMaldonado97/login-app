@@ -1,6 +1,7 @@
 package com.sergio.login;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -12,9 +13,11 @@ import java.util.Optional;
 public class AuthController {
 
     private final UsuarioRepository usuarioRepository;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public AuthController(UsuarioRepository usuarioRepository) {
+    public AuthController(UsuarioRepository usuarioRepository, BCryptPasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @PostMapping("/login")
@@ -24,7 +27,7 @@ public class AuthController {
 
         Optional<Usuario> usuario = usuarioRepository.findByUsername(username);
 
-        if (usuario.isPresent() && usuario.get().getPassword().equals(password)) {
+        if (usuario.isPresent() && passwordEncoder.matches(password, usuario.get().getPassword())) {
             return ResponseEntity.ok(Map.of(
                 "success", true,
                 "message", "Login exitoso",

@@ -1,6 +1,7 @@
 package com.sergio.login;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,9 +14,11 @@ import java.util.Optional;
 public class UsuarioController {
 
     private final UsuarioRepository repo;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public UsuarioController(UsuarioRepository repo) {
+    public UsuarioController(UsuarioRepository repo, BCryptPasswordEncoder passwordEncoder) {
         this.repo = repo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping
@@ -42,7 +45,7 @@ public class UsuarioController {
         if (repo.findByUsername(username).isPresent()) {
             return ResponseEntity.badRequest().body(Map.of("message", "El usuario ya existe"));
         }
-        Usuario saved = repo.save(new Usuario(username, password, nombre, rol));
+        Usuario saved = repo.save(new Usuario(username, passwordEncoder.encode(password), nombre, rol));
         return ResponseEntity.ok(new UsuarioDTO(saved.getId(), saved.getUsername(), saved.getNombre(), saved.getRol()));
     }
 
@@ -61,7 +64,7 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(Map.of("message", "Rol inválido"));
         }
 
-        Usuario updated = new Usuario(u.getUsername(), password.isBlank() ? u.getPassword() : password, nombre, rol);
+        Usuario updated = new Usuario(u.getUsername(), password.isBlank() ? u.getPassword() : passwordEncoder.encode(password), nombre, rol);
         setId(updated, id);
         repo.save(updated);
         return ResponseEntity.ok(new UsuarioDTO(id, updated.getUsername(), updated.getNombre(), updated.getRol()));
