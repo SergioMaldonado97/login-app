@@ -1,0 +1,140 @@
+<div class="auditoria-container">
+
+  <!-- Cabecera -->
+  <div class="header">
+    <div class="header-left">
+      <h1>Auditoría CRM</h1>
+      <span class="total-badge" *ngIf="!loading">{{ totalElements }} registros</span>
+    </div>
+    <div class="header-right">
+      <button class="btn btn-secondary" (click)="router.navigate(['/dashboard'])">Dashboard</button>
+      <button class="btn btn-danger" (click)="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros-panel">
+    <div class="filtros-grid">
+      <div class="filtro-grupo">
+        <label>Entidad</label>
+        <select [(ngModel)]="filtroEntidad">
+          <option *ngFor="let e of entidades" [value]="e">{{ e || 'Todas' }}</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <label>Acción</label>
+        <select [(ngModel)]="filtroAccion">
+          <option *ngFor="let a of acciones" [value]="a">{{ a || 'Todas' }}</option>
+        </select>
+      </div>
+      <div class="filtro-grupo">
+        <label>Usuario</label>
+        <input type="text" [(ngModel)]="filtroUsername" placeholder="Buscar por usuario..." />
+      </div>
+      <div class="filtro-grupo">
+        <label>Desde</label>
+        <input type="date" [(ngModel)]="filtroFechaDesde" />
+      </div>
+      <div class="filtro-grupo">
+        <label>Hasta</label>
+        <input type="date" [(ngModel)]="filtroFechaHasta" />
+      </div>
+    </div>
+    <div class="filtros-actions">
+      <button class="btn btn-primary" (click)="buscar()">Buscar</button>
+      <button class="btn btn-outline" (click)="limpiarFiltros()">Limpiar</button>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-msg" *ngIf="error">{{ error }}</div>
+
+  <!-- Loading -->
+  <div class="loading" *ngIf="loading">Cargando registros...</div>
+
+  <!-- Tabla -->
+  <div class="tabla-wrapper" *ngIf="!loading">
+    <table class="tabla-auditoria" *ngIf="registros.length > 0; else sinDatos">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Fecha / Hora</th>
+          <th>Entidad</th>
+          <th>ID Registro</th>
+          <th>Acción</th>
+          <th>Usuario</th>
+          <th>IP Origen</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let r of registros">
+          <!-- Fila principal -->
+          <tr [ngClass]="'fila-' + r.accion?.toLowerCase()"
+              (click)="toggleExpand(r.id)"
+              [class.expandible]="r.valorAnterior || r.valorNuevo">
+            <td class="expand-btn">
+              <span *ngIf="r.valorAnterior || r.valorNuevo">
+                {{ expandedId === r.id ? '&#9660;' : '&#9654;' }}
+              </span>
+            </td>
+            <td class="fecha">{{ formatearFecha(r.fechaHora) }}</td>
+            <td><span class="badge-entidad">{{ r.entidad }}</span></td>
+            <td class="id-registro">{{ r.idRegistro ?? '—' }}</td>
+            <td><span [ngClass]="'badge-accion badge-' + r.accion?.toLowerCase()">{{ r.accion }}</span></td>
+            <td class="username">{{ r.username }}</td>
+            <td class="ip">{{ r.ipOrigen }}</td>
+            <td class="detalle">{{ r.detalle ?? '—' }}</td>
+          </tr>
+
+          <!-- Fila expandida: comparativa JSON -->
+          <tr *ngIf="expandedId === r.id && (r.valorAnterior || r.valorNuevo)" class="fila-expand">
+            <td colspan="8">
+              <div class="comparativa">
+                <div class="comparativa-col" *ngIf="r.valorAnterior">
+                  <h4>Valor anterior</h4>
+                  <table class="json-tabla">
+                    <tr *ngFor="let entrada of getEntradas(r.valorAnterior)">
+                      <td class="campo-nombre">{{ entrada.clave }}</td>
+                      <td [class.campo-cambiado]="esCambiado(r, entrada.clave)">{{ entrada.valor }}</td>
+                    </tr>
+                  </table>
+                </div>
+                <div class="comparativa-col" *ngIf="r.valorNuevo">
+                  <h4>Valor nuevo</h4>
+                  <table class="json-tabla">
+                    <tr *ngFor="let entrada of getEntradas(r.valorNuevo)">
+                      <td class="campo-nombre">{{ entrada.clave }}</td>
+                      <td [class.campo-cambiado]="esCambiado(r, entrada.clave)">{{ entrada.valor }}</td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+
+    <ng-template #sinDatos>
+      <div class="sin-datos">No se encontraron registros de auditoría con los filtros aplicados.</div>
+    </ng-template>
+  </div>
+
+  <!-- Paginación -->
+  <div class="paginacion" *ngIf="totalPages > 1 && !loading">
+    <button class="btn btn-outline btn-sm" (click)="paginaAnterior()" [disabled]="page === 0">Anterior</button>
+    <ng-container *ngFor="let p of paginasArray">
+      <button *ngIf="p >= page - 2 && p <= page + 2"
+              class="btn btn-sm"
+              [class.btn-primary]="p === page"
+              [class.btn-outline]="p !== page"
+              (click)="irAPagina(p)">
+        {{ p + 1 }}
+      </button>
+    </ng-container>
+    <button class="btn btn-outline btn-sm" (click)="paginaSiguiente()" [disabled]="page >= totalPages - 1">Siguiente</button>
+    <span class="paginacion-info">Página {{ page + 1 }} de {{ totalPages }}</span>
+  </div>
+
+</div>

@@ -51,8 +51,9 @@ export class SessionService implements OnDestroy {
   }
 
   private expirar() {
-    this.auth.cerrarSesion();
-    this.router.navigate(['/login']);
+    this.auth.logout('Timeout de sesión').subscribe({
+      complete: () => this.router.navigate(['/login'])
+    });
   }
 
   ngOnDestroy() {
